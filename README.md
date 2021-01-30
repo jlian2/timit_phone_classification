@@ -1,8 +1,8 @@
 # timit_phone_classification
 ### Preprocess timit dataset
-#### TIMIT-corpus
-  -- TRAIN<br>
-  -- TEST<br>
+#### TIMIT-corpus (total 6300 files)
+  -- TRAIN (4620 files)<br>
+  -- TEST (1680 files)<br>
 * download timit and place TIMIT/ inside this directory
 #### 3 files
 * train_split.txt: list training data files
