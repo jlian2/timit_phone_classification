@@ -3,6 +3,7 @@
 #### TIMIT-corpus
   -- TRAIN<br>
   -- TEST<br>
+* download timit and place TIMIT/ in the same directory
 #### 3 files
 * train_split.txt: list training data files
 * test_split.txt: list testing data files
