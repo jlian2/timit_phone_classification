@@ -32,6 +32,8 @@
 #### Run
 extract features for each file and convert to framewise training/testing data
 * fbank(default: delta=False, delta_delta=False, apply_cmvn=True)<br>
-`python preprocess_data.py -f=fbank --extract`
+`python preprocess_data.py -f=fbank --extract`<br>
+`feature dim = 80`
 * mfcc(default: delta=True, delta_delta=True, apply_cmvn=True)<br>
-`python preprocess_data.py -f=mfcc --extract --delta=True --delta_delta=True`
+`python preprocess_data.py -f=mfcc --extract --delta=True --delta_delta=True`<br>
+`feature dim = 39`
