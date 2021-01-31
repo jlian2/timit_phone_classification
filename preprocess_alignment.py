@@ -62,20 +62,23 @@ def convert39():
 
 def to_framewise(wav, phoneme61):
 	File = open(wav).readlines()
-	pt = 200	# sample point
-	ans = ""	# 'sil' for the 1st frame
-#	assert 400 < int(File[0].strip('\n').split(' ')[1]) # so that the 1st frame must be 'sil'
-	last = int(File[-1].strip('\n').split(' ')[1])
-
-	enter = False
+	ans = ""	
 	for i in range(len(File)):
 		line = File[i]
 		line = line.strip('\n').split(' ')
-#		print(line)
 		h_window=200 #win_length * 0.5
 		hop_length=160
 		start_time=int(line[0])
 		end_time=int(line[1])
+		# deal with the case that *.PHN is not labeled from time 0 
+		if i == 0 and start_time != 0:
+			tmp_start = 0
+			tmp_end = start_time - h_window
+			pad_sil = (tmp_end // hop_length) - (tmp_start // hop_length)  + (1 if tmp_start % hop_length == 0 else 0) - (1 if tmp_end % hop_length == 0 else 0)
+			pad_sil = pad_sil if pad_sil > 0 else 0
+			#  sil
+			ph = str(38)+" "
+			ans += ph*int(pad_sil)
 		start_time = (start_time - h_window) if start_time >= h_window else 0
 		end_time = (end_time - h_window) if end_time >= h_window else 0
 		times = (end_time // hop_length) - (start_time // hop_length)  + (1 if start_time % hop_length == 0 else 0) - (1 if end_time % hop_length == 0 else 0)

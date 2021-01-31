@@ -46,9 +46,9 @@ def toframe(feat_dir,split_list):
     count = 0
     for fileid in split_list:
         count += 1 
-        print('[{0}] {1}'.format(count,fileid))
+        #print('[{0}] {1}'.format(count,fileid))
         origin_feat = np.load(os.path.join(feat_dir,fileid+'.npy'))
-        features, labels = match_length(origin_feat,label[fileid])
+        features, labels= match_length(origin_feat,label[fileid])
         for i in range(features.shape[0]):
             frame.append(features[i,:].tolist()) 
             phone_label.append(labels[i])
