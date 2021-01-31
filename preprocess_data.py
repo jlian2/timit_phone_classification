@@ -38,18 +38,17 @@ def match_length(inputs, labels):
     #print('labels: {}'.format(labels.shape[0]))
     return inputs, labels
 
-def toframe(feat_dir):
+def toframe(feat_dir,split_list):
     split = feat_dir.split('/')[1]
     print('converting {0} data to framewise...'.format(split))
-    files = os.listdir(feat_dir)
     frame = []
     phone_label = []
     count = 0
-    for f in files:
+    for fileid in split_list:
         count += 1 
-        print('[{0}] {1}'.format(count,f.split('.')[0]))
-        origin_feat = np.load(os.path.join(feat_dir,f))
-        features, labels = match_length(origin_feat,label[f.split('.')[0]])
+        print('[{0}] {1}'.format(count,fileid))
+        origin_feat = np.load(os.path.join(feat_dir,fileid+'.npy'))
+        features, labels = match_length(origin_feat,label[fileid])
         for i in range(features.shape[0]):
             frame.append(features[i,:].tolist()) 
             phone_label.append(labels[i])
@@ -67,6 +66,9 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--feature', choices=['fbank', 'mfcc'])
     parser.add_argument('--extract', action='store_true', help='extract features if not extracted yet')
+    parser.add_argument('--delta', default=False, type=bool, help='Append Delta', required=False)
+    parser.add_argument('--delta_delta', default=False, type=bool, help='Append Delta Delta', required=False)
+    parser.add_argument('--apply_cmvn', default=True, type=bool, help='Apply CMVN on feature', required=False)
     args = parser.parse_args()
     return args
 
@@ -83,8 +85,8 @@ def main():
     ### convert to framewise dataset ###
     feat_train_root = 'features_{0}/TRAIN'.format(args.feature)
     feat_test_root = 'features_{0}/TEST'.format(args.feature)
-    toframe(feat_test_root)
-    toframe(feat_train_root)
+    toframe(feat_train_root,train_list)
+    toframe(feat_test_root,test_list)
 
 if __name__ == '__main__':
     main()

@@ -41,10 +41,10 @@ def extract_feature(input_file, feature='fbank', delta=False, delta_delta=False,
         out = np.swapaxes(feat, 0, 1).astype('float32')
         np.save(save_dir,out)
 
-def preprocess_split(args,split,list,in_root):
+def preprocess_split(args,split,split_list,in_root):
     print('preprocessing {0}...'.format(split))
     count = 0
-    for line in list:
+    for line in split_list:
         count += 1
         infile_name = '/'.join(line.split('-'))
         wav = os.path.join(in_root,infile_name)
@@ -53,8 +53,8 @@ def preprocess_split(args,split,list,in_root):
         if not os.path.isdir(output_dir):
             os.makedirs(output_dir, exist_ok=True)
         if args.feature == 'fbank':
-            extract_feature(wav+'.WAV', args.feature, False, False, True, os.path.join(output_dir,line+'.npy'))
+            extract_feature(wav+'.WAV', args.feature, args.delta, args.delta_delta, args.apply_cmvn, os.path.join(output_dir,line+'.npy'))
         elif args.feature == 'mfcc':
-            extract_feature(wav+'.WAV', args.feature, True, True, True, os.path.join(output_dir,line+'.npy'))
+            extract_feature(wav+'.WAV', args.feature, args.delta, args.delta_delta, args.apply_cmvn, os.path.join(output_dir,line+'.npy'))
         else:
             raise ValueError('Unsupported Acoustic Feature: ' + args.feature)
