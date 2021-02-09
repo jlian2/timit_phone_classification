@@ -22,7 +22,7 @@ def match_length(inputs, labels):
     assert(inputs.shape[0]==labels.shape[0])
     return inputs, labels
 
-def toframe(feat_dir,split_list):
+def toframe(feat_dir,split_list,k):
     split = feat_dir.split('/')[1]
     print('converting {0} data to framewise...'.format(split))
     frame = []
@@ -41,7 +41,24 @@ def toframe(feat_dir,split_list):
             sil_count_b -= 1
         phone_label = phone_label + labels[sil_count_f:features.shape[0]+sil_count_b+1].tolist()
         for i in range(sil_count_f,features.shape[0]+sil_count_b+1):
-            frame.append(features[i].tolist()) 
+            frame_stack = np.zeros((2*k+1,features.shape[1]))
+            #center
+            frame_stack[k] = features[i]
+            #previous frames
+            if i-k >= 0:
+                frame_stack[:k] = features[i-k:i]
+            else:
+                frame_stack[k-i:k] = features[:i]
+                frame_stack[:k-i] = frame_stack[k-i]
+            #future frames
+            if i+k <= features.shape[0]-1:
+                frame_stack[k+1:] = features[i+1:i+k+1]
+            else:
+                frame_stack[k+1:k+1+features.shape[0]-(i+1)] = features[i+1:]
+                frame_stack[k+1+features.shape[0]-(i+1):] = frame_stack[k+1+features.shape[0]-(i+1)]
+            frame.append(frame_stack.flatten().tolist()) 
+            #frame.append(features[i].tolist()) 
+            #phone_label.append(labels[i])
     print('------------ finished ------------')
     print('total frames: {0}'.format(len(frame)))
     print('feature dim: {0}'.format(len(frame[0])))
@@ -49,12 +66,13 @@ def toframe(feat_dir,split_list):
     print('----------------------------------')
     #df = pd.DataFrame(frame, columns=range(1, len(frame[0])+1))
     #df.to_csv('{}.csv'.format(feat_dir.split('/')[1]))
-    np.save('{0}.npy'.format(split.lower()),frame)
-    np.save('{0}_label.npy'.format(split.lower()),phone_label)
+    np.save('{0}_{1}.npy'.format(split.lower(),2*k+1),frame)
+    np.save('{0}_label_{1}.npy'.format(split.lower(),2*k+1),phone_label)
 
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--feature', choices=['fbank', 'mfcc'])
+    parser.add_argument('-n', '--num_frames', default=5, type=int, help='stack n neighbor frames on both sides', required=False)
     parser.add_argument('--extract', action='store_true', help='extract features if not extracted yet')
     parser.add_argument('--delta', default=False, type=bool, help='Append Delta', required=False)
     parser.add_argument('--delta_delta', default=False, type=bool, help='Append Delta Delta', required=False)
@@ -75,8 +93,8 @@ def main():
     ### convert to framewise dataset ###
     feat_train_root = 'features_{0}/TRAIN'.format(args.feature)
     feat_test_root = 'features_{0}/TEST'.format(args.feature)
-    toframe(feat_train_root,train_list)
-    toframe(feat_test_root,test_list)
+    toframe(feat_train_root,train_list,args.num_frames)
+    toframe(feat_test_root,test_list,args.num_frames)
 
 if __name__ == '__main__':
     main()
