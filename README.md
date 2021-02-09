@@ -41,7 +41,7 @@ extract features for each file and convert to framewise training/testing data
 ** update: add neighbor frames for training<br>
 input `-n=k` -> total `2k+1` frames (concat k frames on both sides and predict the center frame)
 * fbank(default: n=5, delta=False, delta_delta=False, apply_cmvn=True)<br>
-`python preprocess_data_stack.py -f=mfcc -n=k --delta=True --delta_delta=True`<br>
+`python preprocess_data_stack.py -f=fbank -n=k`<br>
 `feature dim = 80*(2k+1)`
 * mfcc(default: n=5, delta=True, delta_delta=True, apply_cmvn=True)<br>
 `python preprocess_data_stack.py -f=mfcc -n=k --delta=True --delta_delta=True`<br>
