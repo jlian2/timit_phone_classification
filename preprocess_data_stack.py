@@ -55,7 +55,8 @@ def toframe(feat_dir,split_list,k):
                 frame_stack[k+1:] = features[i+1:i+k+1]
             else:
                 frame_stack[k+1:k+1+features.shape[0]-(i+1)] = features[i+1:]
-                frame_stack[k+1+features.shape[0]-(i+1):] = frame_stack[k+1+features.shape[0]-(i+1)]
+                #frame_stack[k+1+features.shape[0]-(i+1):] = frame_stack[k+1+features.shape[0]-(i+1)]
+                frame_stack[k+1+features.shape[0]-(i+1):] = features[-1]
             frame.append(frame_stack.flatten().tolist()) 
             #frame.append(features[i].tolist()) 
             #phone_label.append(labels[i])
